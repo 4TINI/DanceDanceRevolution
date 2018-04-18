@@ -7,6 +7,38 @@ PImage frecce2;
 PImage frecce3;
 PImage frecce4;
 
+public class freccia
+{
+  public int tempo;
+  public int colonna;
+  public int posizione;
+  public int stato;
+  public int velocita;
+};
+ArrayList<freccia> frecciein =new ArrayList<freccia>();
+
+//va aggiunta una funzione che prenda le freccie da un file di testo che abbiamo preparato e idealmente 
+//aggiunga a frecciein tutte le freccie che servono, per ora aggiungo a freccie in 4 freccie
+  //queste funzioni non funzionano, odio java, somebody help
+ public void settempo( int tempof ) {
+      tempo = tempof;
+   }
+   
+public void setcolonna( int colonnaf ) {
+      colonna = colonnaf;
+   }
+   
+ public void setposizione( int posizionef ) {
+      posizione = posizionef;
+   }
+   
+ public void setstato( int statof ) {
+      stato = statof;
+   }
+ public void setvelocita( int velocitaf ) {
+      velocita = velocitaf;
+   }
+   
 void setup(){
   
   size(450 , 900);
@@ -22,7 +54,21 @@ frecce1=loadImage("frecce1.png");
 frecce2=loadImage("frecce2.png");
 frecce3=loadImage("frecce3.png");
 frecce4=loadImage("frecce4.png");
-}
+
+//questa parte è solo per prova
+frecciein.add(new freccia());
+frecciein.add(new freccia());
+frecciein.add(new freccia());
+frecciein.add(new freccia());
+for ( int i=0;i <frecciein.size(0);i++){
+freccia temp = frecciein.get(0);
+frecciein.remove(0);
+temp.settempo(i);
+temp.setcolonna(i);
+temp.setstato(1);
+temp.setvelocita(5);
+temp.setposizione(0);
+frecciein.add(temp);}
 
 void draw(){
 
