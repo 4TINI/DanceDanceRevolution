@@ -15,10 +15,10 @@ public class freccia
   public int stato;
   public int velocita;
 };
-ArrayList<freccia> frecciein =new ArrayList<freccia>();
+ArrayList<freccia> freccein =new ArrayList<freccia>();
 
-//va aggiunta una funzione che prenda le freccie da un file di testo che abbiamo preparato e idealmente 
-//aggiunga a frecciein tutte le freccie che servono, per ora aggiungo a freccie in 4 freccie
+//va aggiunta una funzione che prenda le frecce da un file di testo che abbiamo preparato e idealmente 
+//aggiunga a freccein tutte le frecce che servono, per ora aggiungo a frecce in 4 frecce
   //queste funzioni non funzionano, odio java, somebody help
  public void settempo( int tempof ) {
       tempo = tempof;
@@ -56,19 +56,19 @@ frecce3=loadImage("frecce3.png");
 frecce4=loadImage("frecce4.png");
 
 //questa parte è solo per prova
-frecciein.add(new freccia());
-frecciein.add(new freccia());
-frecciein.add(new freccia());
-frecciein.add(new freccia());
-for ( int i=0;i <frecciein.size(0);i++){
-freccia temp = frecciein.get(0);
-frecciein.remove(0);
+freccein.add(new freccia());
+freccein.add(new freccia());
+freccein.add(new freccia());
+freccein.add(new freccia());
+for (int i=0;i <freccein.size(0);i++){
+freccia temp = freccein.get(0);
+freccein.remove(0);
 temp.settempo(i);
 temp.setcolonna(i);
 temp.setstato(1);
 temp.setvelocita(5);
 temp.setposizione(0);
-frecciein.add(temp);}
+freccein.add(temp);}
 
 void draw(){
 
