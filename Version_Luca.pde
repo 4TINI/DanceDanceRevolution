@@ -3,12 +3,12 @@ import processing.video.*;
 
 //**********GLOBAL VARIABLES**********//
 PImage backImage, UpBtn, RightBtn, DownBtn, LeftBtn, LevelBar; //White Arrows Buttons
+
 int dimSize = 900; //window size
-float Points = -14.6; //Loading Bar counter (is intiliazed as -14.6 because of the click on the button, change it later)
+float Score = -14.6; //Loading Bar counter (is intiliazed as -14.6 because of the click on the button, change it later)
 int screen = 0; //Screen counter
 
 int FrameCounter = 0;
-float r, g, b;
 
 PFont myFont;
 
@@ -16,14 +16,22 @@ PGraphics TopLayer; //Use this class if you need to draw into an off-screen grap
 
 Movie ShadowDance;
 
-boolean rectOver = false;
-color rectColor;
-color rectHighlight;
-int rectX, rectY; 
-int rectSize = 90; 
+PImage playBtn;
+boolean BtnOver = false;
+
+/*Button
+int BtnX;
+int BtnY;
+int BtnSizeX; 
+int BtnSizeY;*/
+
+//rect
+int rectX, rectY;
+int sizeX, sizeY;
 
 void setup() {
   size(900, 900);
+  
   
   TopLayer = createGraphics(900, 900);
   
@@ -38,18 +46,7 @@ void setup() {
   //load background
   backImage = loadImage("back.png");
   backImage.resize(dimSize, dimSize);
-  /*background(backImage);
-
-  //show white arrows
-  image(UpBtn, 620, 40);
-  image(RightBtn, 730, 40);
-  image(LeftBtn, 400, 40);
-  image(DownBtn, 510, 40);
-  
-  //point bar
-  LevelBar.resize(408, 204);
-  image(LevelBar,0, 0);*/
-   
+     
   //music
   
   
@@ -60,19 +57,23 @@ void setup() {
   textFont(myFont);
   textSize(30);
   
-  /*textAlign(CENTER, CENTER);
-  text("Lv.1", 80,100);*/
-  
   //video (REMEMBER TO PUT THE VIDEO IN A FOLDER CALLED "data")
   ShadowDance = new Movie(this, "ShadowDance.mp4");
   ShadowDance.loop();
   
-  //play button
-  rectColor = color(0);
-  rectHighlight = color(51);
-  rectX = width/2-rectSize-10;
-  rectY = height/2-rectSize/2;
- 
+  /*play button
+  playBtn = loadImage("play3.png");
+  BtnX = width/2;
+  BtnY = height/2;
+  BtnSizeX = playBtn.width;
+  BtnSizeY = playBtn.height;*/
+  
+  //rect
+  rectX = width/2;
+  rectY = height/2 + 10;
+  sizeX = 400;
+  sizeY = 70;
+  
 }
 
 // We control which screen is active by settings / updating
@@ -99,15 +100,39 @@ void draw() {
 void initScreen() {
 
   background(0);
+  fill(255);
+  rectMode(CENTER);
+  rect(rectX, rectY, sizeX, sizeY);
   update(mouseX, mouseY);
-  image(ShadowDance, 0, 0);
-  if (rectOver) {
-    fill(rectHighlight);
+  
+  TopLayer.beginDraw();
+    //this if command changes the background color 
+    if(FrameCounter == 20){
+      TopLayer.colorMode(HSB);
+      TopLayer.tint(random(255), 255, 255);
+      
+      FrameCounter = 0;
+    }
+  TopLayer.image(ShadowDance, width/2-240, 30);
+  TopLayer.endDraw();
+  
+  image(TopLayer,0,0);
+  
+  noTint();
+  
+  textSize(60);
+  if (BtnOver) {
+    colorMode(HSB);
+    fill(330, 2, 94); 
   } else {
-    fill(rectColor);
-  }
-  stroke(255);
-  rect(rectX, rectY, rectSize, rectSize);
+    fill(250, 100, 94);
+  }  
+  //image(playBtn, BtnX, BtnY);   
+  textAlign(CENTER, CENTER);
+  text("New Game", width/2, height/2);
+  
+  //update the framecounter
+  FrameCounter = FrameCounter + 1;
 }
 
 void levelOne() {
@@ -115,16 +140,14 @@ void levelOne() {
   TopLayer.beginDraw();
     //this if command changes the background color
     if(FrameCounter == 20) {
-      r = random(20, 255);
-      g = random(20, 255);
-      b = random(20, 255);
-      TopLayer.tint(r,g,b);
+      TopLayer.colorMode(HSB);
+      TopLayer.tint(random(255),255, 255);
       TopLayer.image(backImage, 0, 0);
       FrameCounter = 0;
     }
   TopLayer.endDraw();
   
-  image(TopLayer,0,0);
+  image(TopLayer, 0, 0);
   
   noTint();
   
@@ -137,10 +160,10 @@ void levelOne() {
   //Loading bar
   noStroke();
   fill(46, 180, 7);
-  rect(129, 87, Points, 32); //everytime I click the mouse the width of the bar grows
+  rect(129, 87, Score, 32); //everytime I click the mouse the width of the bar grows
   
   //this if command checks if the target point is reached
-  if (Points > 246) {
+  if (Score > 246) {
   textSize(60);
   fill(240, 236, 238);
   textAlign(CENTER, CENTER);
@@ -159,9 +182,9 @@ void levelOne() {
   FrameCounter = FrameCounter + 1;
 }  
 
-/********* OTHER METHODS *********/
+/********* OTHER METHODS AND FUNCTIONS *********/
 void mouseClicked() {
-  Points = Points + 14.6;  
+  Score = Score + 14.6;  
 }
 
 void movieEvent(Movie m) { 
@@ -174,17 +197,17 @@ void changeScreen() {
 }
 
 void update(int x, int y) {
-  if (overRect(rectX, rectY, rectSize, rectSize)) {
-    rectOver = true;   
+  if (overBtn(rectX, rectY, sizeX, sizeY)) {
+    BtnOver = true;   
   } else {
-    rectOver = false;
+    BtnOver = false;
   }
 }
 
-//function to establish if the mouse is over the botton
-boolean overRect(int x, int y, int width, int height)  {
-  if (mouseX >= x && mouseX <= x+width && 
-      mouseY >= y && mouseY <= y+height) {
+//function to establish if the mouse is over the button
+boolean overBtn(int x, int y, int width, int height)  {
+  if (mouseX >= x-width/2 && mouseX <= x+width/2 && 
+      mouseY >= y-height/2 && mouseY <= y+height/2) {
     return true;
   } else {
     return false;
@@ -193,9 +216,12 @@ boolean overRect(int x, int y, int width, int height)  {
 
 //When you click on the "PLAY" button the game starts
 void mousePressed() {
-  if (rectOver) {
+  if (BtnOver) {
     ShadowDance.stop();
-    rectOver = false;
+    BtnOver = false;
     changeScreen();   
   }
 }
+
+
+    
