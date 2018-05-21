@@ -1,17 +1,20 @@
 //**********LIBRARIES**********//
 import processing.video.*;
+import processing.sound.*;
+import ddf.minim.*;
 
 //**********GLOBAL VARIABLES**********//
 PImage UpBtn, RightBtn, DownBtn, LeftBtn, LevelBar; //White Arrows Buttons
+PImage UpArrow, RightArrow, LeftArrow, DownArrow;  //the images of the sliding arrows
 PImage backImage;
 PImage pauseBtn1;
 PImage pauseBtn2;
 
 int dimSize = 900; //window size
-float Score = -14.6; //Loading Bar counter (is intiliazed as -14.6 because of the click on the button, change it later)
+float Points = -14.6; //Loading Bar counter (is intiliazed as -14.6 because of the click on the button, change it later)
 int screen = 0; //Screen counter
 
-int FrameCounter = 0;
+int FrameCounter = 0; //to count frames and change the tint of the background every n frames
 
 PFont myFont;
 
@@ -19,10 +22,12 @@ PGraphics TopLayer; //Use this class if you need to draw into an off-screen grap
 
 Movie ShadowDance;
 
+//here I list all the buttons of the game 
 boolean BtnStartOver = false;
 boolean BtnScoreOver = false;
 boolean BtnExitOver = false;
-boolean BtnBackOver = false;
+boolean BtnBackOver1 = false;
+boolean BtnBackOver2 = false;
 boolean circleOver = false;
 
 //rect of the "New Game" rectangle
@@ -48,33 +53,81 @@ int circleSize = 96;
 //High scores table
 Table table;
 
+//music files
+Minim minim;
+AudioPlayer menuSong;
+AudioPlayer song1;
+
+int inputcolonna;
+int score = 100;
+boolean carlo = false; //questa variabile serve a non far entrare mai il programma nell'if in cui riceve l'input, che va ancora elaborato
+public class freccia
+ {
+   public int tempo;
+   public int colonna;
+   public int posizione;
+   public int velocita;
+   
+   public freccia(int tempo, int colonna, int velocita){
+     this.tempo=tempo;
+     this.colonna=colonna;
+     this.posizione=900;
+     this.velocita=velocita;
+   }
+     
+ };
+
+public class scritte
+{
+  public String scritta;
+  public int tempo;  
+  public scritte(String scritta, int tempo){
+  this.scritta=scritta;
+  this.tempo=tempo;
+  }
+};
+ArrayList<freccia> freccein; 
+ArrayList<freccia> frecceout;
+ArrayList<scritte> risultati; 
+
 void setup() {
   size(900, 900);
-  
-  
+    
   TopLayer = createGraphics(900, 900);
-  
+
   //load images
   UpBtn = loadImage("Up.png");
   RightBtn = loadImage("Right.png");
   LeftBtn = loadImage("Left.png");
   DownBtn = loadImage("Down.png");
+ 
   LevelBar = loadImage("LevelBar3.png");
   LevelBar.resize(408, 204);
+  
   pauseBtn1 = loadImage("pause.png");
   pauseBtn1.resize(43, 64);
   pauseBtn2 = loadImage("pause.png");
   pauseBtn2.resize(32, 48);
+  
+  UpArrow = loadImage("UpArrow.png");
+  UpArrow.resize(120, 120);
+  RightArrow = loadImage("RightArrow.png");
+  RightArrow.resize(120, 120);
+  LeftArrow = loadImage("LeftArrow.png");
+  LeftArrow.resize(120, 120);
+  DownArrow = loadImage("DownArrow.png");
+  DownArrow.resize(120, 120);
   
   //load background
   backImage = loadImage("back.png");
   backImage.resize(dimSize, dimSize);
      
   //music
-  
-  
-  
-  
+  minim = new Minim(this);
+  menuSong = minim.loadFile("menuSong.mp3");
+  song1 = minim.loadFile("blue.mp3");
+  menuSong.loop();
+    
   //font
   myFont = createFont("AIJFont.ttf", 30);
   textFont(myFont);
@@ -110,10 +163,22 @@ void setup() {
   //circle of the "pause" Button
   circleX = 81;
   circleY = 102;
-  
-  
+ 
   //load the .csv file in which are stored the high scores
   table = loadTable("HighScore.csv", "header");
+  
+  //Here we'll be dealing woth the sliding arrows
+  risultati = new ArrayList<scritte>();
+  freccein = new ArrayList<freccia>();
+  frecceout = new ArrayList<freccia>();
+  JSONArray frecce = loadJSONArray("canzone_1.json");
+  for ( int i=0; i<frecce.size(); i++){
+  JSONObject freccia = frecce.getJSONObject(i);
+  int tempo = freccia.getInt("tempo");
+  int colonna = freccia.getInt("colonna");
+  int velocita = freccia.getInt("velocita");
+  freccein.add(new freccia(tempo, colonna, velocita));
+ }
   
 }
 
@@ -126,6 +191,8 @@ void setup() {
 // 2: Level 2
 // 3: Level 3
 // 4: High Scores
+// 5: Pause Menù
+ 
 
 void draw() {
   if(screen == 0) {
@@ -138,6 +205,10 @@ void draw() {
   
   if(screen == 4) {
      HighScores();
+  }  
+  
+  if(screen == 5) {
+     PauseMenu();
   }  
   
 }
@@ -208,14 +279,14 @@ void initScreen() {
   }  
     
   textAlign(CENTER, CENTER);
-  text("Exit", width/2, height/2+300);
+  text("quit", width/2, height/2+300);
    
   //update the framecounter
   FrameCounter = FrameCounter + 1;
 }
 
 /*********LEVEL 1**********/
-void levelOne() {
+void levelOne() {   
   update3(mouseX, mouseY);
   background(backImage);
   TopLayer.beginDraw();
@@ -242,15 +313,16 @@ void levelOne() {
   noStroke();
   rectMode(CORNER);
   fill(46, 180, 7);
-  rect(129, 87, Score, 32); //everytime I click the mouse the width of the bar grows
+  rect(129, 87, Points, 32); //everytime I click the mouse the width of the bar grows
   
   //this if command checks if the target point is reached
-  if (Score > 246) {
+  if (Points > 246) {
   textSize(60);
   fill(240, 236, 238);
   textAlign(CENTER, CENTER);
   text("YOU WIN!", width/2, height/2);
   noLoop(); //if the point target is reached it stops the loop
+  song1.close();
   }
   
   if (circleOver) {
@@ -277,6 +349,97 @@ void levelOne() {
   textAlign(CENTER, CENTER);
   //text("Lv.1", 80, 100);  
   text("Livello 1", 295, 65);
+  
+  //From now on the code is related to the sliding arrows
+  if (freccein.size()!=0){
+    for (int i=0;i<freccein.size();i++){
+      freccein.get(i).tempo=freccein.get(i).tempo-1;
+      if(freccein.get(i).tempo==0){
+      frecceout.add(freccein.get(i));
+      freccein.remove(i);
+      i--;
+      }
+    }
+  }
+  
+  if(carlo){
+  //qui va inserito l'input di arduino
+   
+  for (int i=0;i<frecceout.size();i++){
+    if (frecceout.get(i).colonna == inputcolonna){
+
+      if(abs(frecceout.get(i).posizione - 30)<10){
+      scrivere ("Perfetto!");
+      score = score+5;
+      if (score > 100)
+      score = 100;
+      frecceout.remove(i);
+      carlo = false;
+      break;
+      }
+      else if(abs(frecceout.get(i).posizione - 30)<30){
+      scrivere ("Grande!");
+      score=score+3;
+      if (score > 100)
+      score = 100;
+      frecceout.remove(i);
+      carlo = false;
+      break;
+      }
+      else  if(abs(frecceout.get(i).posizione - 30)<50){
+      scrivere ("Buono!");
+      score=score+2;
+      if (score > 100)
+      score=100;
+      frecceout.remove(i);
+      carlo = false;
+      break;
+      }
+      else if(abs(frecceout.get(i).posizione - 30)<70){
+      scrivere ("OK!");
+      frecceout.remove(i);
+      carlo = false;
+      break;
+      }
+      else if(abs(frecceout.get(i).posizione - 30)<90){
+      scrivere ("Cattivo!");
+      score = score - 3;
+      frecceout.remove(i);
+      carlo = false;
+      break;
+      }
+    }
+  }
+}
+
+for (int i=0;i<frecceout.size();i++){
+  movimento(frecceout.get(i));
+  if (frecceout.get(i).colonna == 1)
+  image(LeftArrow, 400, frecceout.get(i).posizione);
+  if (frecceout.get(i).colonna == 2)
+   image(DownArrow, 510, frecceout.get(i).posizione);
+  if (frecceout.get(i).colonna == 3)
+   image(UpArrow, 620, frecceout.get(i).posizione);
+  if (frecceout.get(i).colonna == 4)
+   image(RightArrow, 730, frecceout.get(i).posizione);
+  if(frecceout.get(i).posizione==0){
+    frecceout.remove(i);
+    scrivere ("Mancato!");
+    score=score-10;
+  }
+}  
+
+if (risultati.size()!=0){
+  for (int i=0;i<risultati.size();i++){
+  text(risultati.get(i).scritta,350,200+(i*90));
+  risultati.get(i).tempo= risultati.get(i).tempo-1;
+  if (risultati.get(i).tempo==0)
+  risultati.remove(i);
+  }
+}
+ 
+  
+  
   FrameCounter = FrameCounter + 1;
 }
 
@@ -293,7 +456,7 @@ void HighScores() {
   int ind = 350;
   
   textSize(60);
-  if (BtnBackOver) {
+  if (BtnBackOver1) {
     fill(200); 
   } else {
     fill(100);
@@ -315,9 +478,24 @@ void HighScores() {
 
 }
 
+/************PAUSE MENU***********/
+void PauseMenu() {
+  update4(mouseX, mouseY); 
+  
+  textSize(60);
+  if (BtnBackOver2) {
+    fill(200); 
+  } else {
+    fill(150);
+  }  
+     
+  textAlign(CENTER, CENTER);
+  text("Back", width/2, height/2+300);
+}
+
 /********* OTHER METHODS AND FUNCTIONS *********/
 void mouseClicked() {
-  Score = Score + 14.6;  
+  Points = Points + 14.6;  
 }
 
 void movieEvent(Movie m) { 
@@ -352,10 +530,10 @@ void update(int x, int y) {
 
 void update2(int x, int y) {
   if (overBtn(rectBackX, rectBackY, sizeBackX, sizeBackY)) {
-    BtnBackOver = true;
+    BtnBackOver1 = true;
   }     
   else {
-   BtnBackOver = false; 
+   BtnBackOver1 = false; 
   }
 }
 
@@ -365,6 +543,15 @@ void update3(int x, int y) {
   }
    else {
     circleOver = false;
+  }
+}
+
+void update4(int x, int y) {
+  if (overBtn(rectBackX, rectBackY, sizeBackX, sizeBackY)) {
+    BtnBackOver2 = true;
+  }     
+  else {
+   BtnBackOver2 = false; 
   }
 }
 
@@ -388,13 +575,18 @@ boolean overBtn(int x, int y, int width, int height)  {
   }
 }
 
-//When you click on the "PLAY" button the game starts
+//What happens when you click on a button
 void mousePressed() {
   if (BtnStartOver) {
     ShadowDance.stop();
+    menuSong.pause();
+    menuSong.rewind();
+    Points = -14.6;     
     BtnStartOver = false;
-    Score = -14.6;
-    changeScreen();   
+    changeScreen();
+    delay(2000);  
+    song1.play();
+    
   }
   
   if (BtnScoreOver) {
@@ -409,16 +601,51 @@ void mousePressed() {
     exit();    
   }
   
-  if (BtnBackOver) {
-    BtnBackOver = false;
+  if (BtnBackOver1) {
+    BtnBackOver1 = false;
+    ShadowDance.loop();
+    screen = 0;  
+  }
+  
+  if (BtnBackOver2) {
+    BtnBackOver2 = false;
+    menuSong.loop();
     ShadowDance.loop();
     screen = 0;  
   }
   
   if(circleOver){
-  noLoop();
+  song1.pause();
+  circleOver = false;
+  fill(50,120);
+  rect(0, 0,900,900); 
+  TopLayer.clear();
+  screen = 5;
   }
 }
 
+void movimento (freccia f){
+  f.posizione=f.posizione-f.velocita; 
+ }
+ 
+  void scrivere (String res){
+  risultati.add(new scritte(res,60));
+}
 
+void keyPressed() {
+  if (key == CODED) {
+    carlo = true;
+    if (keyCode == LEFT) {
+      inputcolonna = 1;
+    } else if (keyCode == DOWN) {
+      inputcolonna = 2;
+    } else if (keyCode == UP) {
+      inputcolonna = 3;
+    } else if (keyCode == RIGHT) {
+      inputcolonna = 4;
+    }
     
+}
+
+
+}    
