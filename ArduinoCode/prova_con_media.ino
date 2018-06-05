@@ -3,10 +3,14 @@
 //const byte ledPin = 13;
 //const byte interruptPin = 3;
 //volatile byte state = HIGH;
-CapacitiveSensor cs_4_2 = CapacitiveSensor(2, 4);
-long total1;
-CapacitiveSensor cs_5_3 = CapacitiveSensor(3, 5);
-long total2;
+CapacitiveSensor cs_6_2 = CapacitiveSensor(2, 6);
+long sx;
+CapacitiveSensor cs_7_3 = CapacitiveSensor(3, 7);
+long su;
+CapacitiveSensor cs_8_4 = CapacitiveSensor(4,8);
+long dx;
+CapacitiveSensor cs_9_5 = CapacitiveSensor(5,9);
+long giu;
 
 
 void setup(){
@@ -14,18 +18,32 @@ void setup(){
   
  // cs_4_2.reset_CS_AutoCal();
  // cs_4_2.set_CS_Timeout_Millis(2000);
-  cs_4_2.set_CS_AutocaL_Millis(0xFFFFFFFF);     // turn off autocalibrate on channel 1 - just as an example
+//  cs_4_2.set_CS_AutocaL_Millis(0xFFFFFFFF);     // turn off autocalibrate on channel 1 - just as an example
 }
 
 
 void loop(){
-   total1 =  cs_4_2.capacitiveSensor(60);
-   total2= cs_5_3.capacitiveSensor(60);
-   //Serial.print("Primo: ");
-   Serial.println(total1);
-   //Serial.print("Secondo: ");
-   Serial.println(total2); 
-   delay(400);
+   sx =  cs_6_2.capacitiveSensor(60);
+   su= cs_7_3.capacitiveSensor(60);
+   dx= cs_8_4.capacitiveSensor(60);
+   giu= cs_9_5.capacitiveSensor(60);
+
+   if (sx > 200) {
+     Serial.print("sx.");  
+   }
+   
+   if (dx > 200) {
+     Serial.print("dx.");  
+   }
+   
+   if (su > 200) {
+     Serial.print("su.");  
+   }
+   
+   if (giu > 200) {
+     Serial.print("giu.");  
+   } 
+   delay(70);  
 }
 
 
