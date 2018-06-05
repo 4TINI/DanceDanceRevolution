@@ -10,9 +10,15 @@ PImage backImage;
 PImage pauseBtn1;
 PImage pauseBtn2;
 
+int startTime; //a timing variable
+int wait = 5000;
+boolean check = true;
+
 int dimSize = 900; //window size
-float Points = -14.6; //Loading Bar counter (is intiliazed as -14.6 because of the click on the button, change it later)
 int screen = 0; //Screen counter
+int LevelIndex = 1;
+int JsonIndex = 0;
+String[] JsonFiles = {"canzone_1.json", "canzone_2.json", "canzone_3.json" };
 
 int FrameCounter = 0; //to count frames and change the tint of the background every n frames
 
@@ -29,6 +35,15 @@ boolean BtnExitOver = false;
 boolean BtnBackOver1 = false;
 boolean BtnBackOver2 = false;
 boolean circleOver = false;
+boolean BtnResumeOver = false;
+
+boolean PerfectMatch = false;
+boolean GreatMatch = false;
+boolean NiceMatch = false;
+boolean OkMatch = false;
+boolean AlmoustMatch = false;
+boolean MissMatch = false;
+int ComboCounter = 0;
 
 //rect of the "New Game" rectangle
 int rectStartX, rectStartY;
@@ -46,52 +61,50 @@ int sizeExitX, sizeExitY;
 int rectBackX, rectBackY;
 int sizeBackX, sizeBackY;
 
+//rect of the "Back" button
+int rectBack2X, rectBack2Y;
+int sizeBack2X, sizeBack2Y;
+
 //circle of the "pause" button
 int circleX, circleY;
 int circleSize = 96;
 
+//rect of the "Resume Game" button
+int rectResumeX, rectResumeY;
+int sizeResumeX, sizeResumeY;
+
 //High scores table
 Table table;
+int[] scoreList = new int[5];
+ArrayList<TEXTBOX> textboxes = new ArrayList<TEXTBOX>();
+boolean logged = false; // DEMO
+String Text = "";
 
 //music files
 Minim minim;
+AudioPlayer[] player = new AudioPlayer[3];
 AudioPlayer menuSong;
-AudioPlayer song1;
 
-int inputcolonna;
+int multiplier = 30;  //this is the time for a single result apperance
+int columnInput;
+int GeneralScore = 0;
 int score = 100;
 boolean carlo = false; //questa variabile serve a non far entrare mai il programma nell'if in cui riceve l'input, che va ancora elaborato
-public class freccia
- {
-   public int tempo;
-   public int colonna;
-   public int posizione;
-   public int velocita;
-   
-   public freccia(int tempo, int colonna, int velocita){
-     this.tempo=tempo;
-     this.colonna=colonna;
-     this.posizione=900;
-     this.velocita=velocita;
-   }
-     
- };
 
-public class scritte
-{
-  public String scritta;
-  public int tempo;  
-  public scritte(String scritta, int tempo){
-  this.scritta=scritta;
-  this.tempo=tempo;
-  }
-};
-ArrayList<freccia> freccein; 
-ArrayList<freccia> frecceout;
-ArrayList<scritte> risultati; 
+ArrayList<SlidingArrow> arrowsIn; 
+ArrayList<SlidingArrow> arrowsOut;
 
+/************SETUP*************/
 void setup() {
   size(900, 900);
+  
+  TEXTBOX userTB = new TEXTBOX();
+   userTB.X = width/2;
+   userTB.Y = height/2;
+   userTB.W = 300;
+   userTB.H = 50;
+   
+   textboxes.add(userTB);
     
   TopLayer = createGraphics(900, 900);
 
@@ -124,8 +137,9 @@ void setup() {
      
   //music
   minim = new Minim(this);
-  menuSong = minim.loadFile("menuSong.mp3");
-  song1 = minim.loadFile("blue.mp3");
+  menuSong = minim.loadFile("menuSong.mp3");  
+  player[0] = minim.loadFile("blue2.mp3");
+  player[1] = minim.loadFile("1.mp3");
   menuSong.loop();
     
   //font
@@ -160,25 +174,33 @@ void setup() {
   sizeBackX = 220;
   sizeBackY = 50;
   
+  //rect of the "Back2" Button
+  rectBack2X = width/2;
+  rectBack2Y = height/2+60;
+  sizeBack2X = 220;
+  sizeBack2Y = 50;
+  
+  //rect of the "Resume Game" Button
+  rectResumeX = width/2;
+  rectResumeY = height/2;
+  sizeResumeX = 525;
+  sizeResumeY = 50;
+  
   //circle of the "pause" Button
   circleX = 81;
   circleY = 102;
  
   //load the .csv file in which are stored the high scores
   table = loadTable("HighScore.csv", "header");
+  for(int i = 0; i < table.getRowCount(); i++) {
+    scoreList[i] = table.getInt(i, "score");
+    println(scoreList[i]);
+  }
   
   //Here we'll be dealing woth the sliding arrows
-  risultati = new ArrayList<scritte>();
-  freccein = new ArrayList<freccia>();
-  frecceout = new ArrayList<freccia>();
-  JSONArray frecce = loadJSONArray("canzone_1.json");
-  for ( int i=0; i<frecce.size(); i++){
-  JSONObject freccia = frecce.getJSONObject(i);
-  int tempo = freccia.getInt("tempo");
-  int colonna = freccia.getInt("colonna");
-  int velocita = freccia.getInt("velocita");
-  freccein.add(new freccia(tempo, colonna, velocita));
- }
+  
+  arrowsIn = new ArrayList<SlidingArrow>();
+  arrowsOut = new ArrayList<SlidingArrow>();
   
 }
 
@@ -187,9 +209,7 @@ void setup() {
 // to the value of this variable.
 //
 // 0: Initial Screen
-// 1: Level 1
-// 2: Level 2
-// 3: Level 3
+// 1: Levels
 // 4: High Scores
 // 5: Pause Menù
  
@@ -200,7 +220,7 @@ void draw() {
   }
   
    if(screen == 1) {
-     levelOne();
+     levels();
   } 
   
   if(screen == 4) {
@@ -285,8 +305,8 @@ void initScreen() {
   FrameCounter = FrameCounter + 1;
 }
 
-/*********LEVEL 1**********/
-void levelOne() {   
+/*********LEVEL STRUCTURE**********/
+void levels() {   
   update3(mouseX, mouseY);
   background(backImage);
   TopLayer.beginDraw();
@@ -309,20 +329,17 @@ void levelOne() {
   image(LeftBtn, 400, 40);
   image(DownBtn, 510, 40);
   
-  //Loading bar
+  //Loading bar  
   noStroke();
   rectMode(CORNER);
   fill(46, 180, 7);
-  rect(129, 87, Points, 32); //everytime I click the mouse the width of the bar grows
-  
   //this if command checks if the target point is reached
-  if (Points > 246) {
-  textSize(60);
-  fill(240, 236, 238);
-  textAlign(CENTER, CENTER);
-  text("YOU WIN!", width/2, height/2);
-  noLoop(); //if the point target is reached it stops the loop
-  song1.close();
+  if (score/5 > 248) {
+    rect(129, 87, 248, 32);
+  }
+  else {
+    
+    rect(129, 87, score / 5, 32); //everytime I click the mouse the width of the bar grows  
   }
   
   if (circleOver) {
@@ -336,8 +353,7 @@ void levelOne() {
     noStroke();
     ellipseMode(CENTER);
     ellipse(circleX, circleY,circleSize, circleSize);
-    image(pauseBtn2,65,80);
-   
+    image(pauseBtn2,65,80);   
   }
   
   //Point Bar   
@@ -347,16 +363,17 @@ void levelOne() {
   textSize(25);
   fill(240, 236, 238);
   textAlign(CENTER, CENTER);
-  //text("Lv.1", 80, 100);  
-  text("Livello 1", 295, 65);
+   
+  text("Livello " + LevelIndex, 295, 65);
   
   //From now on the code is related to the sliding arrows
-  if (freccein.size()!=0){
-    for (int i=0;i<freccein.size();i++){
-      freccein.get(i).tempo=freccein.get(i).tempo-1;
-      if(freccein.get(i).tempo==0){
-      frecceout.add(freccein.get(i));
-      freccein.remove(i);
+  if (arrowsIn.size() != 0){
+    for (int i = 0; i < arrowsIn.size(); i++){
+      arrowsIn.get(i).time = arrowsIn.get(i).time-1;
+      
+      if(arrowsIn.get(i).time == 0){
+      arrowsOut.add(arrowsIn.get(i));
+      arrowsIn.remove(i);
       i--;
       }
     }
@@ -365,81 +382,228 @@ void levelOne() {
   if(carlo){
   //qui va inserito l'input di arduino
    
-  for (int i=0;i<frecceout.size();i++){
-    if (frecceout.get(i).colonna == inputcolonna){
-
-      if(abs(frecceout.get(i).posizione - 30)<10){
-      scrivere ("Perfetto!");
-      score = score+5;
-      if (score > 100)
-      score = 100;
-      frecceout.remove(i);
+  for (int i = 0; i < arrowsOut.size(); i++){
+    if (arrowsOut.get(i).column == columnInput){
+      
+      if(abs(arrowsOut.get(i).position - 30) < 10){
+      MissMatch = false;
+      PerfectMatch = true;
+      GreatMatch = false;
+      NiceMatch = false;
+      OkMatch = false;
+      AlmoustMatch = false;
+      score = score + 5 * ComboCounter;      
+      arrowsOut.remove(i);
       carlo = false;
+      ComboCounter = ComboCounter + 1;
       break;
       }
-      else if(abs(frecceout.get(i).posizione - 30)<30){
-      scrivere ("Grande!");
-      score=score+3;
-      if (score > 100)
-      score = 100;
-      frecceout.remove(i);
+      
+      else if(abs(arrowsOut.get(i).position - 30) < 30) {
+      MissMatch = false;
+      PerfectMatch = false;
+      GreatMatch = true;
+      NiceMatch = false;
+      OkMatch = false;
+      AlmoustMatch = false;
+      score = score + 3 * ComboCounter;      
+      arrowsOut.remove(i);
       carlo = false;
+      ComboCounter = ComboCounter + 1;
       break;
       }
-      else  if(abs(frecceout.get(i).posizione - 30)<50){
-      scrivere ("Buono!");
-      score=score+2;
-      if (score > 100)
-      score=100;
-      frecceout.remove(i);
+      
+      else  if(abs(arrowsOut.get(i).position - 30) < 50){
+      MissMatch = false;
+      PerfectMatch = false;
+      GreatMatch = false;
+      NiceMatch = true;
+      OkMatch = false;
+      AlmoustMatch = false;
+      score = score + 2 * ComboCounter;     
+      arrowsOut.remove(i);
       carlo = false;
+      ComboCounter = ComboCounter + 1;
       break;
       }
-      else if(abs(frecceout.get(i).posizione - 30)<70){
-      scrivere ("OK!");
-      frecceout.remove(i);
+      
+      else if(abs(arrowsOut.get(i).position - 30) < 70){
+      MissMatch = false;
+      PerfectMatch = false;
+      GreatMatch = false;
+      NiceMatch = false;
+      OkMatch = true;
+      AlmoustMatch = false;
+      arrowsOut.remove(i);
       carlo = false;
+      ComboCounter = ComboCounter + 1;
       break;
       }
-      else if(abs(frecceout.get(i).posizione - 30)<90){
-      scrivere ("Cattivo!");
+      
+      else if(abs(arrowsOut.get(i).position - 30) < 90){
+      MissMatch = false;
+      PerfectMatch = false;
+      GreatMatch = false;
+      NiceMatch = false;
+      OkMatch = false;
+      AlmoustMatch = true;
       score = score - 3;
-      frecceout.remove(i);
+      arrowsOut.remove(i);
       carlo = false;
+      ComboCounter = ComboCounter + 1;
       break;
       }
     }
   }
 }
 
-for (int i=0;i<frecceout.size();i++){
-  movimento(frecceout.get(i));
-  if (frecceout.get(i).colonna == 1)
-  image(LeftArrow, 400, frecceout.get(i).posizione);
-  if (frecceout.get(i).colonna == 2)
-   image(DownArrow, 510, frecceout.get(i).posizione);
-  if (frecceout.get(i).colonna == 3)
-   image(UpArrow, 620, frecceout.get(i).posizione);
-  if (frecceout.get(i).colonna == 4)
-   image(RightArrow, 730, frecceout.get(i).posizione);
-  if(frecceout.get(i).posizione==0){
-    frecceout.remove(i);
-    scrivere ("Mancato!");
-    score=score-10;
+//Here the actual sliding arrows are created and let slide
+for (int i = 0; i < arrowsOut.size(); i++){
+  movimento(arrowsOut.get(i));
+  
+  if (arrowsOut.get(i).column == 1)
+  image(LeftArrow, 400, arrowsOut.get(i).position);
+  
+  if (arrowsOut.get(i).column == 2)
+   image(DownArrow, 510, arrowsOut.get(i).position);
+   
+  if (arrowsOut.get(i).column == 3)
+   image(UpArrow, 620, arrowsOut.get(i).position);
+   
+  if (arrowsOut.get(i).column == 4)
+   image(RightArrow, 730, arrowsOut.get(i).position);
+   
+  if(arrowsOut.get(i).position == 0){
+    arrowsOut.remove(i);
+    MissMatch = true;
+    PerfectMatch = false;
+    GreatMatch = false;
+    NiceMatch = false;
+    OkMatch = false;
+    AlmoustMatch = false;
+    ComboCounter = 0;
+    score = score - 10;
   }
 }  
 
-if (risultati.size()!=0){
-  for (int i=0;i<risultati.size();i++){
-  text(risultati.get(i).scritta,350,200+(i*90));
-  risultati.get(i).tempo= risultati.get(i).tempo-1;
-  if (risultati.get(i).tempo==0)
-  risultati.remove(i);
+textSize(50);
+fill(240, 236, 238);
+
+if (ComboCounter > 0)
+  text("Combo " + ComboCounter, 200, 350);
+if (MissMatch)
+  text("Miss", 200, 250);
+else if(PerfectMatch)
+  text("Perfect", 200, 250);
+else if(GreatMatch)
+  text("Great", 200, 250);
+else if(NiceMatch)
+  text("Nice", 200, 250);
+else if(AlmoustMatch)
+  text("Almoust", 200, 250);
+else if(OkMatch)
+  text("Ok", 200, 250);
+  
+  if (!player[LevelIndex-1].isPlaying() && score > 246) {
+    if(check){
+      startTime = millis();
+      check = false;
+    }
+    if (LevelIndex == 2 && GeneralScore > scoreList[0]) {           
+      if(millis() > startTime + 2000){ 
+        textSize(40);
+        text("Type your name!", width/2, height/2-100);
+        text("(Enter to submit)", width/2, height/2+100);
+        for (TEXTBOX t : textboxes) {
+          t.DRAW();
+        }
+        if (logged) {
+          table.removeRow(0);
+          TableRow newRow = table.addRow();
+          newRow.setString("name", Text);
+          newRow.setString("score", str(GeneralScore));
+          table.sort(1);
+          
+          for(int i = 0; i < table.getRowCount(); i++) {
+            scoreList[i] = table.getInt(i, "score");
+            println(scoreList[i]);
+          }
+          
+          screen = 4;
+          TopLayer.clear();
+          menuSong.loop();
+          score = 100;
+          check = true;
+        }
+      }
+      else {
+        textSize(60);
+        text("New Highscore!", width/2, height/2);  
+      }
+    }
+    else {
+      textSize(80);
+      text("You Win!", width/2, height/2);      
+      if(millis() > startTime + 5000){ 
+        GeneralScore = GeneralScore + score;
+        ReadJson();
+        score = 100;
+        BtnBackOver2 = false;
+        MissMatch = false;
+        PerfectMatch = false;
+        GreatMatch = false;
+        NiceMatch = false;
+        OkMatch = false;
+        AlmoustMatch = false;
+        ComboCounter = 0;
+        LevelIndex = LevelIndex + 1;
+        JsonIndex = JsonIndex + 1;
+        player[LevelIndex-1].play();
+        check = true;
+      }
+    }
   }
-}
- 
   
+  //if the score is not enough high you lose and you go back to the main menù
+  else if (!player[LevelIndex-1].isPlaying() && score < 246) { 
+    if(check){
+      startTime = millis();
+      check = false;
+    }
+    textSize(80);
+    text("You Lost!", width/2, height/2); 
+    if(millis() > startTime + 5000){     
+      TopLayer.clear();
+      menuSong.loop();
+      score = 100;
+      ShadowDance.loop();
+      check = true;
+      screen = 0;
+    }
+  }
   
+  //if the score goes under zero it goes back to the main menù
+  else if (score < 0) {
+    if(check){
+      startTime = millis();
+      check = false;
+    }
+    player[LevelIndex-1].pause();
+    textSize(80);
+    text("You Lost!", width/2, height/2); 
+    arrowsIn.clear();
+    arrowsOut.clear();
+    
+    if(millis() > startTime + 5000){    
+      TopLayer.clear();
+      score = 100;
+      LevelIndex = 1;     
+      menuSong.loop();
+      ShadowDance.loop();
+      check = true;
+      screen = 0;  
+    }
+  }  
   FrameCounter = FrameCounter + 1;
 }
 
@@ -453,7 +617,7 @@ void HighScores() {
   fill(240, 236, 238);
   textAlign(CENTER, CENTER);
   text("HIGH SCORES", width/2, 100);
-  int ind = 350;
+  int ind = 550;
   
   textSize(60);
   if (BtnBackOver1) {
@@ -473,7 +637,7 @@ void HighScores() {
     fill(240, 236, 238);
     textAlign(LEFT);
     text(name + ".........." + points, 170, ind);  
-    ind = ind + 50;
+    ind = ind - 50;
   }
 
 }
@@ -481,8 +645,17 @@ void HighScores() {
 /************PAUSE MENU***********/
 void PauseMenu() {
   update4(mouseX, mouseY); 
-  
   textSize(60);
+  //checks if the mouse is over the "High Scores" Button it highlights it changing color
+  if (BtnResumeOver) {
+    fill(200); 
+  } else {
+    fill(150);
+  }  
+    
+  textAlign(CENTER, CENTER);
+  text("Resume Game", width/2, height/2-10);
+  
   if (BtnBackOver2) {
     fill(200); 
   } else {
@@ -490,13 +663,10 @@ void PauseMenu() {
   }  
      
   textAlign(CENTER, CENTER);
-  text("Back", width/2, height/2+300);
+  text("Back", width/2, height/2+50);
 }
 
 /********* OTHER METHODS AND FUNCTIONS *********/
-void mouseClicked() {
-  Points = Points + 14.6;  
-}
 
 void movieEvent(Movie m) { 
   m.read(); 
@@ -538,7 +708,7 @@ void update2(int x, int y) {
 }
 
 void update3(int x, int y) {
-  if ( overCircle(circleX, circleY, circleSize) ) {
+  if (overCircle(circleX, circleY, circleSize)) {
     circleOver = true;
   }
    else {
@@ -547,11 +717,17 @@ void update3(int x, int y) {
 }
 
 void update4(int x, int y) {
-  if (overBtn(rectBackX, rectBackY, sizeBackX, sizeBackY)) {
+  if (overBtn(rectBack2X, rectBack2Y, sizeBack2X, sizeBack2Y)) {
     BtnBackOver2 = true;
+    BtnResumeOver = false;
   }     
+  else if (overBtn(rectResumeX, rectResumeY, sizeResumeX, sizeResumeY)) {
+   BtnResumeOver = true;
+   BtnBackOver2 = false;    
+  }
   else {
-   BtnBackOver2 = false; 
+   BtnResumeOver = false;
+   BtnBackOver2 = false;
   }
 }
 
@@ -580,23 +756,23 @@ void mousePressed() {
   if (BtnStartOver) {
     ShadowDance.stop();
     menuSong.pause();
-    menuSong.rewind();
-    Points = -14.6;     
+    menuSong.rewind();    
     BtnStartOver = false;
-    changeScreen();
-    delay(2000);  
-    song1.play();
-    
+    ReadJson();     
+    player[LevelIndex-1].rewind();
+    player[LevelIndex-1].play();
+    changeScreen();    
   }
   
   if (BtnScoreOver) {
-    ShadowDance.stop();
+    ShadowDance.pause();
     BtnScoreOver = false;
     screen = 4;   
   }
   
   if (BtnExitOver) {
     ShadowDance.stop();
+    saveTable(table, "HighScore.csv");
     BtnStartOver = false;
     exit();    
   }
@@ -609,43 +785,87 @@ void mousePressed() {
   
   if (BtnBackOver2) {
     BtnBackOver2 = false;
+    MissMatch = false;
+    PerfectMatch = false;
+    GreatMatch = false;
+    NiceMatch = false;
+    OkMatch = false;
+    AlmoustMatch = false;
+    ComboCounter = 0;
     menuSong.loop();
     ShadowDance.loop();
+    score = 100;
+    LevelIndex = 1;
+    arrowsIn.clear();
+    arrowsOut.clear();    
     screen = 0;  
   }
   
   if(circleOver){
-  song1.pause();
-  circleOver = false;
-  fill(50,120);
-  rect(0, 0,900,900); 
-  TopLayer.clear();
-  screen = 5;
+    player[LevelIndex-1].pause();
+    circleOver = false;
+    fill(50,120);
+    rect(0, 0, 900, 900); 
+    TopLayer.clear();
+    screen = 5;
   }
+  
+  if(BtnResumeOver) {
+    BtnResumeOver = false;
+    player[LevelIndex-1].play();
+    screen = 1;
+  }
+  
 }
 
-void movimento (freccia f){
-  f.posizione=f.posizione-f.velocita; 
- }
+void movimento (SlidingArrow f){
+  f.position = f.position - f.speed; 
+}
  
-  void scrivere (String res){
-  risultati.add(new scritte(res,60));
-}
 
+
+//Here the code checks the keyboard keys pressed
 void keyPressed() {
   if (key == CODED) {
     carlo = true;
     if (keyCode == LEFT) {
-      inputcolonna = 1;
+      columnInput = 1;
     } else if (keyCode == DOWN) {
-      inputcolonna = 2;
+      columnInput = 2;
     } else if (keyCode == UP) {
-      inputcolonna = 3;
+      columnInput = 3;
     } else if (keyCode == RIGHT) {
-      inputcolonna = 4;
-    }
-    
+      columnInput = 4;
+    }    
+  }
+  
+  for (TEXTBOX t : textboxes) {
+      if (t.KEYPRESSED(key, (int)keyCode)) {
+         logged = true;
+      }
+   }
+   
+   if (keyCode == 32 && screen == 1) {
+    player[LevelIndex-1].pause();
+    fill(50,120);
+    rect(0, 0, 900, 900); 
+    TopLayer.clear();
+    screen = 5;  
+   }
+   
+   else if (keyCode == 32 && screen == 5) {
+    player[LevelIndex-1].play();
+    screen = 1; 
+   }
 }
 
-
-}    
+void ReadJson(){
+ JSONArray ArrowsList = loadJSONArray(JsonFiles[JsonIndex]);
+  for (int i = 0; i < ArrowsList.size(); i++) {
+    JSONObject SlidingArrow = ArrowsList.getJSONObject(i);
+    int time = SlidingArrow.getInt("tempo");
+    int column = SlidingArrow.getInt("colonna");
+    int speed = SlidingArrow.getInt("velocita");
+    arrowsIn.add(new SlidingArrow(time, column, speed));
+  } 
+}
