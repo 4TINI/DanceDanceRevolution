@@ -16,4 +16,17 @@ The Architecture of the game is inspired by the classical arcade video games tha
 
 In the scheme in figure below is showed the structure of all the game screens and the logic operation to pass from a level to the following.
 
+![screenshot 36](https://user-images.githubusercontent.com/32873849/41250773-2f8de066-6db8-11e8-9e5f-e0f259ce779a.png)
+
+In the following figure we can observe how the game layout is organized. During normal gameplay, arrows scroll upwards from the bottom of the screen and pass over a set of stationary arrows near at the top-right corner (referred to as the "guide arrows" or "receptors", officially known as the Step Zone). When the scrolling arrows overlap the stationary ones, the player must step on the corresponding arrows on the dance platform, and the player is given a judgement for their accuracy of every streaked notes (From highest to lowest: Perfect, Great, Nice, Ok, Almost, Miss).
+Successfully hitting the arrows in time with the music fills the score bar, while failure to do so drains it. If the bar is fully exhausted during gameplay or if it isn’t filled completely at the end of the song, the player will fail the level, and the game will be over. Otherwise, the player is taken to the next level.
+The player is free to pause the game as he/she pleases pressing the space bar on the keyboard or the pause button with the mouse next to the score bar.
+
 ![screenshot 43](https://user-images.githubusercontent.com/32873849/41250729-0c59290c-6db8-11e8-99d2-91a16c7fa8a7.png)
+
+### The class "SlidingArrow"
+A class is a user defined blueprint or prototype from which objects are created. It represents the set of properties or methods that are common to all objects of one type. Our object Arrow is made by four instances declared in the class “SlidingArrow”:
+*time
+*column
+*speed
+*position
