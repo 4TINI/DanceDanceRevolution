@@ -42,9 +42,10 @@ At the beginning of each level Processing scans the relative “.Json” file an
   
 ![screenshot 40](https://user-images.githubusercontent.com/32873849/41251025-f2b01460-6db8-11e8-92a0-e5632aae18d9.png)
 
+</p>
+
 ![screenshot 46](https://user-images.githubusercontent.com/32873849/41251043-0c22d61c-6db9-11e8-8897-f17c517ff531.png)
 
-</p>
 ### Score Management
 Let’s now focus on the key aspect of the game: player’s timing and the attribution of points.
 Everytime the user presses a button on the platform the software selects one of the four lanes in which the arrows slide and it calculates the distance from the target. According to the accuracy of the player a score is assigned and a points combo multiplier, initially set to 1, is incremented. When an arrow is missed the combo points bonus is lost reinitializing the multiplier to 1.
