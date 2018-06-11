@@ -37,10 +37,13 @@ A class is a user defined blueprint or prototype from which objects are created.
 
 The pattern of arrows for each song is stored in “.Json” file created with a Matlab code which was run just once setting the average arrows distance in terms of time, the difficulty level of the song in terms of sliding speed and duration of the song. Through a “for” cycle a random pattern of arrows with the four instances listed before was created.
 At the beginning of each level Processing scans the relative “.Json” file and creates an arraylist of “Arrow” objects. At each “draw()” iteration the position of each arrow is updated according to a “sliding” function that interpolates position according to the set speed.
+
 <p align="center">
+  
 ![screenshot 40](https://user-images.githubusercontent.com/32873849/41251025-f2b01460-6db8-11e8-92a0-e5632aae18d9.png)
 
 ![screenshot 46](https://user-images.githubusercontent.com/32873849/41251043-0c22d61c-6db9-11e8-8897-f17c517ff531.png)
+
 </p>
 ### Score Management
 Let’s now focus on the key aspect of the game: player’s timing and the attribution of points.
