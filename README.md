@@ -1,12 +1,12 @@
 # DanceDanceRevolution
-## 1.Introduction
+## 1. Introduction
 ### Assignment
 For the sensors laboratory at Politecnico di Milano we were asked to realize the well known game from the 90s building from scratch the capacitive sensors to realize the platform controller of the game. An Arduino Board was chosen to control all the sensors. A graphical interface was also a request of the assignment. We decided to realize it with Processing a Java based IDE. The two components, ArduinoMicro and graphical computer interface communicate through serial communication.
 
 ### Original Gameplay
 The video game Dance Dance Revolution is a music-based game of timing. The game plays music and shows patterns of arrows synchronized with the music. The player stands on a platform marked with the same four arrows shown in the game and earns a score based on how closely his steps match the timing of the video game. A pattern of steps for a given song is called a step chart, and each step chart has a diculty based on the speed of the music and the number of arrows.
 
-## 2.Hardware
+## 2. Hardware
 In order to replicate the game we had to design a platform. In this sense we created a styrofoam base on which four buttons arrow shaped are placed. Every key is a capacitive sensor connected to a microcontroller board through appropriate resistors. Sensors’ signals are sent to the computer. 
 
 ### Electrical circuit
@@ -24,12 +24,12 @@ As A and d change, the overall capacity will change. Thus, the whole process can
 
 A possible model for the capacity could be:
 
-<p align="center">
-        <dd>Csensed=C1+ΔC</dd>
+<p align="center">        
+Csensed=C1+ΔC
 </p>
 
 
-## 4.Software
+## 4. Software
 The Graphical interface has been realized through Processing, a Java based Integrated Development Environment (IDE).
 
 ### Game Architecture
