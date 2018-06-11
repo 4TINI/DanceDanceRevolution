@@ -15,3 +15,5 @@ The Architecture of the game is inspired by the classical arcade video games tha
 ![screenshot 27](https://user-images.githubusercontent.com/32873849/41108901-02cc2488-6a76-11e8-8d1b-451ce2a5d2ce.png)
 
 In the scheme in figure below is showed the structure of all the game screens and the logic operation to pass from a level to the following.
+
+![screenshot 43](https://user-images.githubusercontent.com/32873849/41250729-0c59290c-6db8-11e8-99d2-91a16c7fa8a7.png)
