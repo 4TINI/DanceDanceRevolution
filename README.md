@@ -20,6 +20,13 @@ The sensors are basically electrical conductors. Therefore, each of them, under 
 with C being the capacity, ε0 and εr being the vacuum and the mean electric permittivity, A being the overlapping surface of the two plates and d the distance between them.
 As A and d change, the overall capacity will change. Thus, the whole process can be studied as a RC circuit which discharges when the external body gets closer to the sensor, creating a way for the current to flow from the sensor to the ground, and that charges when the sensor is left insulated.
 
+![screenshot 68](https://user-images.githubusercontent.com/32873849/41253447-ac03abdc-6dc0-11e8-98ee-7b3e06d746f6.png)
+
+A possible model for the capacity could be:
+<dt>center</dt>
+        <dd>Csensed=C1+ΔC</dd>
+
+
 ## 4.Software
 The Graphical interface has been realized through Processing, a Java based Integrated Development Environment (IDE).
 
