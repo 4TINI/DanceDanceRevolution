@@ -23,8 +23,10 @@ As A and d change, the overall capacity will change. Thus, the whole process can
 ![screenshot 68](https://user-images.githubusercontent.com/32873849/41253447-ac03abdc-6dc0-11e8-98ee-7b3e06d746f6.png)
 
 A possible model for the capacity could be:
-<dt>center</dt>
+
+<p align="center">
         <dd>Csensed=C1+ΔC</dd>
+</p>
 
 
 ## 4.Software
