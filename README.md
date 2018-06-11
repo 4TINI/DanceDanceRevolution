@@ -26,7 +26,7 @@ The player is free to pause the game as he/she pleases pressing the space bar on
 
 ### The class "SlidingArrow"
 A class is a user defined blueprint or prototype from which objects are created. It represents the set of properties or methods that are common to all objects of one type. Our object Arrow is made by four instances declared in the class “SlidingArrow”:
-*time
-*column
-*speed
-*position
+* time
+* column
+* speed
+* position
