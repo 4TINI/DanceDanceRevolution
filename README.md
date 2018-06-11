@@ -28,6 +28,8 @@ A possible model for the capacity could be:
 Csensed=C1+ΔC
 </p>
 
+where C1 is the capacity when no body is near the sensor and ∆C represents the capacity of the body when it couples with the sensor.
+Csensed will then change, as above said, according to the changing distance between the plates. The function loaded on Arduino allows to detect touch or proximity. It constantly switches Send_Pin from HIGH to LOW and viceversa, thus inducing an electrical transient in the capacitive load (R + Csense). A current will flow according to the RC time constant in that moment, which depends on the capacity of the system. By measuring the current flowing through the resistor between the Send_Pin and the Receive_Pin, one can infer the distance between the plates, although this depends on the calibration of the system.
 
 ## 4. Software
 The Graphical interface has been realized through Processing, a Java based Integrated Development Environment (IDE).
