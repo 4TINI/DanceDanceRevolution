@@ -10,6 +10,10 @@ The video game Dance Dance Revolution is a music-based game of timing. The game 
 In order to replicate the game we had to design a platform. In this sense we created a styrofoam base on which four buttons arrow shaped are placed. Every key is a capacitive sensor connected to a microcontroller board through appropriate resistors. Sensors’ signals are sent to the computer. 
 
 ### Electrical circuit
+The platform is made of very basic hardware component: 
+* Arduino Micro, 
+* four 1MΩ resistors 
+* four hand-made electrodes.
 
 ![screenshot 67](https://user-images.githubusercontent.com/32873849/41253351-5728d4fc-6dc0-11e8-8f6a-4985048e05cf.png)
 
@@ -29,7 +33,18 @@ Csensed=C1+ΔC
 </p>
 
 where C1 is the capacity when no body is near the sensor and ∆C represents the capacity of the body when it couples with the sensor.
-Csensed will then change, as above said, according to the changing distance between the plates. The function loaded on Arduino allows to detect touch or proximity. It constantly switches Send_Pin from HIGH to LOW and viceversa, thus inducing an electrical transient in the capacitive load (R + Csense). A current will flow according to the RC time constant in that moment, which depends on the capacity of the system. By measuring the current flowing through the resistor between the Send_Pin and the Receive_Pin, one can infer the distance between the plates, although this depends on the calibration of the system.
+Csensed will then change, as above said, according to the changing distance between the plates. The function loaded on Arduino allows to detect touch or proximity. It constantly switches Send_Pin from HIGH to LOW and viceversa, thus inducing an electrical transient in the capacitive load (R + Csense). A current will flow according to the RC time constant in that moment, which depends on the capacity of the system. By measuring the current flowing through the resistor between the Send_Pin and the Receive_Pin, one can infer the distance between the plates, although this depends on the calibration of the system. 
+
+## 3. Firmware
+The Arduino library CapacitiveSensor.h allows to read capacitance values and their variations of capacitive sensors. The function used is CapacitiveSensor which requires two pins as input variables: one is used as SendPin and the other one is used as ReceivePin. Between them a high value resistor is required in order to limit the current that the function requires to measure the capacitance. 
+Thus, an RC circuit is built, whose time constant depends on both R and C: we used a 1MΩ resistor since our project is based on direct contact with sensor, so the region of interest is the sensor itself.
+The above mentioned function sets the pins and the overall system for the reading. The function which actually reads the capacitance values is capacitiveSensor: according to a sampling time, which is required as function input, the function samples the value and save it (also an ouput variable is required, an integer since the value of the capacitance will be a number).
+
+The Arduino code was written in order for it to read the values of the capacitances at every loop cycle: every time, it reads the “Left Arrow” sensor’s capacitance, then the “Bottom Arrow” and so on. As we noticed, the values are highly dependent on the shape and the mass of the capacitor, so we chose not to calibrate the system but to build the sensors in order for them to me as much alike to one another as possible. Thus, the values that the function got were reasonable and increased (only) when the sensors were directly touched. Since the calibration was basically building all the sensors with the same size and quantity of material, 
+
+we set an empirical threshold capacitance value, which the sensors reach only if touched, to determine whether the contact was happening or not.
+
+
 
 ## 4. Software
 The Graphical interface has been realized through Processing, a Java based Integrated Development Environment (IDE).
