@@ -6,7 +6,13 @@ For the sensors laboratory at Politecnico di Milano we were asked to realize the
 ### Original Gameplay
 The video game Dance Dance Revolution is a music-based game of timing. The game plays music and shows patterns of arrows synchronized with the music. The player stands on a platform marked with the same four arrows shown in the game and earns a score based on how closely his steps match the timing of the video game. A pattern of steps for a given song is called a step chart, and each step chart has a diculty based on the speed of the music and the number of arrows.
 
-## Software
+## 2.Hardware
+In order to replicate the game we had to design a platform. In this sense we created a styrofoam base on which four buttons arrow shaped are placed. Every key is a capacitive sensor connected to a microcontroller board through appropriate resistors. Sensors’ signals are sent to the computer. 
+
+# Electrical circuit
+
+
+## 4.Software
 The Graphical interface has been realized through Processing, a Java based Integrated Development Environment (IDE).
 
 ### Game Architecture
