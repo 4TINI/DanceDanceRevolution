@@ -30,3 +30,7 @@ A class is a user defined blueprint or prototype from which objects are created.
 * column
 * speed
 * position
+
+The pattern of arrows for each song is stored in “.Json” file created with a Matlab code which was run just once setting the average arrows distance in terms of time, the difficulty level of the song in terms of sliding speed and duration of the song. Through a “for” cycle a random pattern of arrows with the four instances listed before was created.
+At the beginning of each level Processing scans the relative “.Json” file and creates an arraylist of “Arrow” objects. At each “draw()” iteration the position of each arrow is updated according to a “sliding” function that interpolates position according to the set speed.
+
