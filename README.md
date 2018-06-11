@@ -23,7 +23,9 @@ Successfully hitting the arrows in time with the music fills the score bar, whil
 The player is free to pause the game as he/she pleases pressing the space bar on the keyboard or the pause button with the mouse next to the score bar.
 
 <p align="center">
+  
 ![screenshot 43](https://user-images.githubusercontent.com/32873849/41250729-0c59290c-6db8-11e8-99d2-91a16c7fa8a7.png)
+
 </p>
 
 ### The class "SlidingArrow"
