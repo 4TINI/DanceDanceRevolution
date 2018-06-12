@@ -28,19 +28,19 @@ void loop(){
    dx= cs_8_4.capacitiveSensor(60);
    giu= cs_9_5.capacitiveSensor(60);
 
-   if (sx > 200) {
+   if (sx > 100) {
      Serial.print("sx.");  
    }
    
-   if (dx > 200) {
+   if (dx > 100) {
      Serial.print("dx.");  
    }
    
-   if (su > 200) {
+   if (su > 100) {
      Serial.print("su.");  
    }
    
-   if (giu > 200) {
+   if (giu > 100) {
      Serial.print("giu.");  
    } 
    delay(70);  
