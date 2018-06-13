@@ -10,7 +10,7 @@ For the sensors laboratory at Politecnico di Milano we were asked to realize the
   - [Sensor's Design](#sensors-design)
   - [Sensor's electrical model](#sensors-electrical-model)
 - [Firmware](#firmware)
-  - [Serial Comunication](#serial-communciation)
+  - [Serial Comunication](#serial-comunciation)
 - [Software](#software)
   - [Game Architecture](#game-architecture)
   - [The class "SlidingArrow"](#the-class-slidingarrow)
@@ -69,7 +69,7 @@ The Arduino code was written in order for it to read the values of the capacitan
 
 we set an empirical threshold capacitance value, which the sensors reach only if touched, to determine whether the contact was happening or not.
 
-### Serial Communication
+### Serial Comunication
 Arduino can exploit the Serial Port to send data via different functions: we used Serial.println(), which takes as an input both a string type or an integer variable but only gives as output a string type variable. This is possible only if the Standard Firmata protocol is loaded on Arduino: this protocol allows Arduino to communicate with softwares on the host computer and vice versa. In our project, communications from computer to Arduino was not necessary.
 
 Our first idea was to send the values to Processing every time a loop occurred, whether the value was over the threshold or not, and Processing would read the values via the function SerialEvent which activates every time the serial Port is occupied. This happened at every Arduino loop, so a counting variable was created in Processing which counted how many times the serial port was being occupied: thus, we could know from which sensor the function was getting that particular value. This way, the threshold was set in Processing because all the sensed values were directly sent to it, but since the output of the Serial communication was a string, we had to use the function parseInt() on Java which converts a string into an int.
