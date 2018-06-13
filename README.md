@@ -10,7 +10,7 @@ For the sensors laboratory at Politecnico di Milano we were asked to realize the
   - [Sensor's Design](#sensors-design)
   - [Sensor's electrical model](#sensors-electrical-model)
 - [Firmware](#firmware)
-  - [Serial Comunication](#serial-comunciation)
+  - [Serial Comunication](#serial-comunication)
 - [Software](#software)
   - [Game Architecture](#game-architecture)
   - [The class "SlidingArrow"](#the-class-slidingarrow)
