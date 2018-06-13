@@ -7,7 +7,7 @@ For the sensors laboratory at Politecnico di Milano we were asked to realize the
   - [Original Gameplay](#original-gameplay)
 - [Hardware](#hardware)
   - [Electrical Circuit](#electrical-circuit)
-  - [Sensor's Design](#sensor's-design)
+  - [Sensor's Design](#sensor-'-s-design)
   - [Sensor's electrical model](#)
 - [Firmware](#firmware)
 - [Software](#software)
