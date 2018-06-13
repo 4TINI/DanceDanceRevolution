@@ -1,8 +1,8 @@
 # DanceDanceRevolution
 ## Table of Contents
-- [Introduction](#1.-introduction)
-- [Hardware](#2.-hardware)
-- [Firmware](#3.-firmware)
+- [Introduction](#1-.-introduction)
+- [Hardware](#2-.-hardware)
+- [Firmware](#3-.-firmware)
 
 ## 1. Introduction
 ### Assignment
