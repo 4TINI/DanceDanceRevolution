@@ -8,9 +8,13 @@ For the sensors laboratory at Politecnico di Milano we were asked to realize the
 - [Hardware](#hardware)
   - [Electrical Circuit](#electrical-circuit)
   - [Sensor's Design](#sensors-design)
-  - [Sensor's electrical model](#)
+  - [Sensor's electrical model](#sensors-electrical-model)
 - [Firmware](#firmware)
+  - [Serial Comunication](#serial-communciation)
 - [Software](#software)
+  - [Game Architecture](#game-architecture)
+  - [The class "SlidingArrow"](#the-class-slidingarrow)
+  - [Score Management](#score-management)
 
 ## Introduction
 
