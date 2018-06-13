@@ -1,4 +1,6 @@
 # DanceDanceRevolution
+## Table of Contents
+[ciao](#1.-Introduction)
 ## 1. Introduction
 ### Assignment
 For the sensors laboratory at Politecnico di Milano we were asked to realize the well known game from the 90s building from scratch the capacitive sensors to realize the platform controller of the game. An Arduino Board was chosen to control all the sensors. A graphical interface was also a request of the assignment. We decided to realize it with Processing a Java based IDE. The two components, ArduinoMicro and graphical computer interface communicate through serial communication.
