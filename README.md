@@ -4,7 +4,7 @@ For the sensors laboratory at Politecnico di Milano we were asked to realize the
 
 ## Table of Contents
 - [Introduction](#introduction)
-  -[Original Gameplay](#original-gameplay)
+  - [Original Gameplay](#original-gameplay)
 - [Hardware](#hardware)
 - [Firmware](#firmware)
 - [Software](#software)
