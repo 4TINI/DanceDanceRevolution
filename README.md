@@ -4,14 +4,14 @@
 - [Hardware](#hardware)
 - [Firmware](#firmware)
 
-## 1. Introduction
+## Introduction
 ### Assignment
 For the sensors laboratory at Politecnico di Milano we were asked to realize the well known game from the 90s building from scratch the capacitive sensors to realize the platform controller of the game. An Arduino Board was chosen to control all the sensors. A graphical interface was also a request of the assignment. We decided to realize it with Processing a Java based IDE. The two components, ArduinoMicro and graphical computer interface communicate through serial communication.
 
 ### Original Gameplay
 The video game Dance Dance Revolution is a music-based game of timing. The game plays music and shows patterns of arrows synchronized with the music. The player stands on a platform marked with the same four arrows shown in the game and earns a score based on how closely his steps match the timing of the video game. A pattern of steps for a given song is called a step chart, and each step chart has a diculty based on the speed of the music and the number of arrows.
 
-## 2. Hardware
+## Hardware
 In order to replicate the game we had to design a platform. In this sense we created a styrofoam base on which four buttons arrow shaped are placed. Every key is a capacitive sensor connected to a microcontroller board through appropriate resistors. Sensors’ signals are sent to the computer. 
 
 ### Electrical circuit
@@ -50,7 +50,7 @@ Csensed=C1+ΔC
 where C1 is the capacity when no body is near the sensor and ∆C represents the capacity of the body when it couples with the sensor.
 Csensed will then change, as above said, according to the changing distance between the plates. The function loaded on Arduino allows to detect touch or proximity. It constantly switches Send_Pin from HIGH to LOW and viceversa, thus inducing an electrical transient in the capacitive load (R + Csense). A current will flow according to the RC time constant in that moment, which depends on the capacity of the system. By measuring the current flowing through the resistor between the Send_Pin and the Receive_Pin, one can infer the distance between the plates, although this depends on the calibration of the system. 
 
-## 3. Firmware
+## Firmware
 The Arduino library CapacitiveSensor.h allows to read capacitance values and their variations of capacitive sensors. The function used is CapacitiveSensor which requires two pins as input variables: one is used as SendPin and the other one is used as ReceivePin. Between them a high value resistor is required in order to limit the current that the function requires to measure the capacitance. 
 Thus, an RC circuit is built, whose time constant depends on both R and C: we used a 1MΩ resistor since our project is based on direct contact with sensor, so the region of interest is the sensor itself.
 The above mentioned function sets the pins and the overall system for the reading. The function which actually reads the capacitance values is capacitiveSensor: according to a sampling time, which is required as function input, the function samples the value and save it (also an ouput variable is required, an integer since the value of the capacitance will be a number).
@@ -68,7 +68,7 @@ Even though this method worked, it still could bring up some issues: if the Port
 Therefore we rejected this idea. 
 The communication instead starts from Arduino filtering which readings are to pass to Processing: in every loop, Arduino reads the values from all the four sensors and sends a string in the Serial Port only if the value read is bigger then the threshold. The string that is sent in the Serial Port is a two-characters string which simply states which sensor is over threshold (eg: if the Right Arrow sensor is touched, then the value that Arduino reads will be higher than the threshold and it will send “dx” (meaning ‘right’) in the Serial Port. 
 
-## 4. Software
+## Software
 The Graphical interface has been realized through Processing, a Java based Integrated Development Environment (IDE).
 
 ### Game Architecture
