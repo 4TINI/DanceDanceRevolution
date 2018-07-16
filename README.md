@@ -15,6 +15,7 @@ For the sensors laboratory at Politecnico di Milano we were asked to realize the
   - [Game Architecture](#game-architecture)
   - [The class "SlidingArrow"](#the-class-slidingarrow)
   - [Score Management](#score-management)
+- [Conclusion](#conclusion)
 
 ## Introduction
 
@@ -115,3 +116,10 @@ Let’s now focus on the key aspect of the game: player’s timing and the attri
 Everytime the user presses a button on the platform the software selects one of the four lanes in which the arrows slide and it calculates the distance from the target. According to the accuracy of the player a score is assigned and a points combo multiplier, initially set to 1, is incremented. When an arrow is missed the combo points bonus is lost reinitializing the multiplier to 1.
 
 ![screenshot 45](https://user-images.githubusercontent.com/32873849/41251154-5cd76b9a-6db9-11e8-9a2f-b6a41fa6d2ff.png)
+
+## Conclusion
+The four capacitive sensors are responsive and send successfully the input caused by the pressing of the buttons to Processing through Arduino.
+Being the sensors’ calibration very complex, we opted for a more intuitive solution with the sensors: evaluating the difference between a high input and a low one. This solution proved to be successful and the sensors ended up working very well.
+Processing uses this information to confront in real time the arrows present on the screen with the input, determining the result.
+The problem with this could have been that a single input from the sensors could unleash multiple reactions from the Processing software, but our code proved to be solid enough to exclude this instance, for example limiting the simultaneous inputs to one.
+We are ultimately very satisfied with the result we achieved, by the promptness of the sensor and by how we utilized the interface, and the problems that we were afraid could ruin the execution ended up being less relevant than we thought and we were easily able to solve them, managing to achieve a very good game.
